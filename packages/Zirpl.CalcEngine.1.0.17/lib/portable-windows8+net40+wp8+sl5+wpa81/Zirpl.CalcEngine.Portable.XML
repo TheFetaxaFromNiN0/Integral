@@ -1,0 +1,228 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Zirpl.CalcEngine.Portable</name>
+    </assembly>
+    <members>
+        <member name="T:Zirpl.CalcEngine.CalculationEngine">
+            <summary>
+            CalcEngine parses strings and returns Expression objects that can
+            be evaluated.
+            </summary>
+            <remarks>
+            <para>This class has three extensibility points:</para>
+            <para>Use the <b>DataContext</b> property to add an object's properties to the engine scope.</para>
+            <para>Use the <b>RegisterFunction</b> method to define custom functions.</para>
+            <para>Override the <b>GetExternalObject</b> method to add arbitrary variables to the engine scope.</para>
+            </remarks>
+        </member>
+        <member name="M:Zirpl.CalcEngine.CalculationEngine.Parse(System.String)">
+            <summary>
+            Parses a string into an <see cref="T:Zirpl.CalcEngine.Expression"/>.
+            </summary>
+            <param name="expression">String to parse.</param>
+            <returns>An <see cref="T:Zirpl.CalcEngine.Expression"/> object that can be evaluated.</returns>
+        </member>
+        <member name="M:Zirpl.CalcEngine.CalculationEngine.Evaluate(System.String)">
+            <summary>
+            Evaluates a string.
+            </summary>
+            <param name="expression">Expression to evaluate.</param>
+            <returns>The value of the expression.</returns>
+            <remarks>
+            If you are going to evaluate the same expression several times,
+            it is more efficient to parse it only once using the <see cref="M:Zirpl.CalcEngine.CalculationEngine.Parse(System.String)"/>
+            method and then using the Expression.Evaluate method to evaluate
+            the parsed expression.
+            </remarks>
+        </member>
+        <member name="M:Zirpl.CalcEngine.CalculationEngine.Evaluate``1(System.String)">
+            <summary>
+            Evaluates a string.
+            </summary>
+            <param name="expression">Expression to evaluate.</param>
+            <returns>The value of the expression.</returns>
+        </member>
+        <member name="M:Zirpl.CalcEngine.CalculationEngine.TryEvaluate(System.String,System.Object@)">
+            <summary>
+            Evaluates a string.
+            </summary>
+            <param name="expression">Expression to evaluate.</param>
+            <returns>The value of the expression.</returns>
+        </member>
+        <member name="M:Zirpl.CalcEngine.CalculationEngine.TryEvaluate``1(System.String,``0@)">
+            <summary>
+            Evaluates a string.
+            </summary>
+            <param name="expression">Expression to evaluate.</param>
+            <returns>The value of the expression.</returns>
+        </member>
+        <member name="P:Zirpl.CalcEngine.CalculationEngine.CacheExpressions">
+            <summary>
+            Gets or sets whether the calc engine should keep a cache with parsed
+            expressions.
+            </summary>
+        </member>
+        <member name="P:Zirpl.CalcEngine.CalculationEngine.OptimizeExpressions">
+            <summary>
+            Gets or sets whether the calc engine should optimize expressions when
+            they are parsed.
+            </summary>
+        </member>
+        <member name="P:Zirpl.CalcEngine.CalculationEngine.IdentifierChars">
+            <summary>
+            Gets or sets a string that specifies special characters that are valid for identifiers.
+            </summary>
+            <remarks>
+            Identifiers must start with a letter or an underscore, which may be followed by
+            additional letters, underscores, or digits. This string allows you to specify
+            additional valid characters such as ':' or '!' (used in Excel range references
+            for example).
+            </remarks>
+        </member>
+        <member name="M:Zirpl.CalcEngine.CalculationEngine.RegisterFunction(System.String,System.Int32,System.Int32,Zirpl.CalcEngine.CalcEngineFunction)">
+            <summary>
+            Registers a function that can be evaluated by this <see cref="T:Zirpl.CalcEngine.CalculationEngine"/>.
+            </summary>
+            <param name="functionName">Function name.</param>
+            <param name="parmMin">Minimum parameter count.</param>
+            <param name="parmMax">Maximum parameter count.</param>
+            <param name="fn">Delegate that evaluates the function.</param>
+        </member>
+        <member name="M:Zirpl.CalcEngine.CalculationEngine.RegisterFunction(System.String,System.Int32,Zirpl.CalcEngine.CalcEngineFunction)">
+            <summary>
+            Registers a function that can be evaluated by this <see cref="T:Zirpl.CalcEngine.CalculationEngine"/>.
+            </summary>
+            <param name="functionName">Function name.</param>
+            <param name="parmCount">Parameter count.</param>
+            <param name="fn">Delegate that evaluates the function.</param>
+        </member>
+        <member name="M:Zirpl.CalcEngine.CalculationEngine.GetExternalObject(System.String)">
+            <summary>
+            Gets an external object based on an identifier.
+            </summary>
+            <remarks>
+            This method is useful when the engine needs to create objects dynamically.
+            For example, a spreadsheet calc engine would use this method to dynamically create cell
+            range objects based on identifiers that cannot be enumerated at design time
+            (such as "AB12", "A1:AB12", etc.)
+            </remarks>
+        </member>
+        <member name="P:Zirpl.CalcEngine.CalculationEngine.DataContext">
+            <summary>
+            Gets or sets the DataContext for this <see cref="T:Zirpl.CalcEngine.CalculationEngine"/>.
+            </summary>
+            <remarks>
+            Once a DataContext is set, all public properties of the object become available
+            to the CalcEngine, including sub-properties such as "Address.Street". These may
+            be used with expressions just like any other constant.
+            </remarks>
+        </member>
+        <member name="P:Zirpl.CalcEngine.CalculationEngine.Functions">
+            <summary>
+            Gets the dictionary that contains function definitions.
+            </summary>
+        </member>
+        <member name="P:Zirpl.CalcEngine.CalculationEngine.Variables">
+            <summary>
+            Gets the dictionary that contains simple variables (not in the DataContext).
+            </summary>
+        </member>
+        <member name="P:Zirpl.CalcEngine.CalculationEngine.CultureInfo">
+            <summary>
+            Gets or sets the <see cref="P:Zirpl.CalcEngine.CalculationEngine.CultureInfo"/> to use when parsing numbers and dates.
+            </summary>
+        </member>
+        <member name="T:Zirpl.CalcEngine.ExpressionCache">
+            <summary>
+            Caches expressions based on their string representation.
+            This saves parsing time.
+            </summary>
+            <remarks>
+            Uses weak references to avoid accumulating unused expressions.
+            </remarks>
+        </member>
+        <member name="T:Zirpl.CalcEngine.BinaryExpression">
+            <summary>
+            Binary expression, e.g. 1+2
+            </summary>
+        </member>
+        <member name="T:Zirpl.CalcEngine.BindingExpression">
+            <summary>
+            Expression based on an object's properties.
+            </summary>
+        </member>
+        <member name="T:Zirpl.CalcEngine.BindingInfo">
+            <summary>
+            Helper used for building BindingExpression objects.
+            </summary>
+        </member>
+        <member name="T:Zirpl.CalcEngine.Expression">
+            <summary>
+            Base class that represents parsed expressions.
+            </summary>
+            <remarks>
+            For example:
+            <code>
+            Expression expr = scriptEngine.Parse(strExpression);
+            object val = expr.Evaluate();
+            </code>
+            </remarks>
+        </member>
+        <member name="T:Zirpl.CalcEngine.FunctionExpression">
+            <summary>
+            Function call expression, e.g. sin(0.5)
+            </summary>
+        </member>
+        <member name="T:Zirpl.CalcEngine.IValueObject">
+            <summary>
+            Interface supported by external objects that have to return a value
+            other than themselves (e.g. a cell range object should return the 
+            cell content instead of the range itself).
+            </summary>
+        </member>
+        <member name="T:Zirpl.CalcEngine.TokenType">
+            <summary>
+            Token types (used when building expressions, sequence defines operator priority)
+            </summary>
+        </member>
+        <member name="T:Zirpl.CalcEngine.Token">
+            <summary>
+            Represents a node in the expression tree.
+            </summary>
+        </member>
+        <member name="T:Zirpl.CalcEngine.UnaryExpression">
+            <summary>
+            Unary expression, e.g. +123
+            </summary>
+        </member>
+        <member name="T:Zirpl.CalcEngine.VariableExpression">
+            <summary>
+            Simple variable reference.
+            </summary>
+        </member>
+        <member name="T:Zirpl.CalcEngine.XObjectExpression">
+            <summary>
+            Expression that represents an external object.
+            </summary>
+        </member>
+        <member name="T:Zirpl.CalcEngine.CalcEngineFunction">
+            <summary>
+            Delegate that represents CalcEngine functions.
+            </summary>
+            <param name="parms">List of <see cref="T:Zirpl.CalcEngine.Expression"/> objects that represent the
+            parameters to be used in the function call.</param>
+            <returns>The function result.</returns>
+        </member>
+        <member name="T:Zirpl.CalcEngine.FunctionDefinition">
+            <summary>
+            Function definition class (keeps function name, parameter counts, and delegate).
+            </summary>
+        </member>
+        <member name="T:Zirpl.CalcEngine.TokenId">
+            <summary>
+            Token ID (used when evaluating expressions)
+            </summary>
+        </member>
+    </members>
+</doc>
